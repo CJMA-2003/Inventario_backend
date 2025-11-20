@@ -33,8 +33,9 @@ namespace inventario.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Identidad")
-                        .HasColumnType("int");
+                    b.Property<string>("Identidad")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()

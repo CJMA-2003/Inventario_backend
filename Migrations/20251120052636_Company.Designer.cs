@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventario.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251119064729_AddDireccionToCompany")]
-    partial class AddDireccionToCompany
+    [Migration("20251120052636_Company")]
+    partial class Company
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,9 @@ namespace inventario.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Identidad")
-                        .HasColumnType("int");
+                    b.Property<string>("Identidad")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
