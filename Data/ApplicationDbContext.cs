@@ -10,7 +10,8 @@ namespace Inventario.Data
         {
         }
 
-        // Ejemplo tabla Productos
         public DbSet<Company> Company { get; set; }
+        public DbSet<Store> Store{ get; set; }
+        public DbSet<Storage> Storage{ get; set; }
     }
 }

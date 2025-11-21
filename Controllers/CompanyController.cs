@@ -1,14 +1,14 @@
 using Inventario.Data;
-using Microsoft.AspNetCore.Mvc;
 using Inventario.Dtos.Company;
 using Inventario.Models;
-namespace inventario.Controllers
+using Microsoft.AspNetCore.Mvc;
+
+namespace Inventario.Controllers
 {
     [Route("company")]
     [ApiController]
     public class CompanyController : ControllerBase
     {
-
         private readonly ApplicationDbContext _context;
 
         public CompanyController(ApplicationDbContext context)
@@ -16,21 +16,33 @@ namespace inventario.Controllers
             _context = context;
         }
 
-
+        // GET: company?page=1&perPage=10
         [HttpGet]
-        public IActionResult GetCompanies()
+        public IActionResult GetCompanies(int page = 1, int perPage = 10)
         {
+            var total = _context.Company.Count();
+
             var companies = _context.Company
-            .Skip(0)
-            .Take(1)   
-            .ToList();
-            return Ok(companies);
+                .Skip((page - 1) * perPage)
+                .Take(perPage)
+                .ToList();
+
+            var response = new
+            {
+                data = companies,
+                current_page = page,
+                per_page = perPage,
+                total = total,
+                to = Math.Min(page * perPage, total)
+            };
+
+            return Ok(response);
         }
 
+        // POST: company
         [HttpPost]
         public IActionResult CreateCompany([FromBody] CompanyCreateDto dto)
         {
-            // Verificar si ya existe una compañía con la misma identidad
             var existingCompany = _context.Company
                 .FirstOrDefault(c => c.identidad == dto.identidad);
 
@@ -43,7 +55,6 @@ namespace inventario.Controllers
                 });
             }
 
-            // Crear la nueva compañía
             var company = new Company
             {
                 identidad = dto.identidad,
@@ -62,11 +73,14 @@ namespace inventario.Controllers
             });
         }
 
+        // PUT: company/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id,[FromBody] CompanyUpdateDto dto)
+        public IActionResult UpdateCompany(int id, [FromBody] CompanyUpdateDto dto)
         {
             var company = _context.Company.Find(id);
-            if(company == null){
+
+            if (company == null)
+            {
                 return BadRequest(new
                 {
                     status = "error",
@@ -74,17 +88,18 @@ namespace inventario.Controllers
                 });
             }
 
-            if(!string.IsNullOrEmpty(dto.direccion)){
+            if (!string.IsNullOrEmpty(dto.direccion))
+            {
                 company.direccion = dto.direccion;
             }
 
             _context.SaveChanges();
-            return Ok(new 
+
+            return Ok(new
             {
-            status = "success",
-            message = "Valores actualizados correctamente"
+                status = "success",
+                message = "Valores actualizados correctamente"
             });
         }
-
     }
 }
