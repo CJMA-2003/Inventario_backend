@@ -44,7 +44,7 @@ namespace Inventario.Controllers
         public IActionResult CreateCompany([FromBody] CompanyCreateDto dto)
         {
             var existingCompany = _context.Company
-                .FirstOrDefault(c => c.identidad == dto.identidad);
+                .FirstOrDefault(c => c.Identidad == dto.identidad);
 
             if (existingCompany != null)
             {
@@ -57,9 +57,9 @@ namespace Inventario.Controllers
 
             var company = new Company
             {
-                identidad = dto.identidad,
-                nombre = dto.nombre,
-                direccion = dto.direccion
+                Identidad = dto.identidad,
+                Nombre = dto.nombre,
+                Direccion = dto.direccion
             };
 
             _context.Company.Add(company);
@@ -90,7 +90,7 @@ namespace Inventario.Controllers
 
             if (!string.IsNullOrEmpty(dto.direccion))
             {
-                company.direccion = dto.direccion;
+                company.Direccion = dto.direccion;
             }
 
             _context.SaveChanges();

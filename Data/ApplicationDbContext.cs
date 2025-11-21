@@ -1,4 +1,5 @@
 using Inventario.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventario.Data

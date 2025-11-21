@@ -2,12 +2,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventario.Models
 {
+    [Table("storage")]
     public class Storage
     {
-        public int id { get; set; }
+        [Column("id")]
+        public int Id{ get; set; }
 
-        public string name { get; set; }
-        public string address { get; set; }
+        [Column("name")]
+        public string Name { get; set; }
+        
+        [Column("address")]
+        public string Address { get; set; }
 
         // Foreign Key
         [Column("store_id")]
