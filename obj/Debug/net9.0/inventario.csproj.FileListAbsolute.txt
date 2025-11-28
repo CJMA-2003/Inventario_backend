@@ -242,3 +242,4 @@ C:\Users\kipit\source\repos\CJMA-2003\Inventario_backend\obj\Debug\net9.0\invent
 C:\Users\kipit\source\repos\CJMA-2003\Inventario_backend\obj\Debug\net9.0\inventario.genruntimeconfig.cache
 C:\Users\kipit\source\repos\CJMA-2003\Inventario_backend\obj\Debug\net9.0\ref\inventario.dll
 C:\Users\kipit\source\repos\CJMA-2003\Inventario_backend\bin\Debug\net9.0\Scrutor.dll
+D:\proyectos publicos\inventario\bin\Debug\net9.0\Scrutor.dll

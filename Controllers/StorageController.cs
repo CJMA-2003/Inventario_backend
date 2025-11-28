@@ -54,5 +54,49 @@ namespace Inventario.Controllers
         }
 
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStorage(int id ,[FromBody] StorageUpdateDto dto )
+        {
+            try
+            {
+                var response = await _service.Update(id,dto);
+
+                return Ok(new
+                {
+                    status = "success",
+                    data = response,
+                    message = "Registro actualizado exitosamente"
+                }); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "Internal error",
+                    error = ex.Message 
+                });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStorage(int id)
+        {
+            try{
+                var response = await _service.Delete(id);
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Registro eliminado exitosamente"
+                }); 
+            }catch(Exception ex){
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "Internal error",
+                    error = ex.Message 
+                }); 
+            }
+        }
     }
 }

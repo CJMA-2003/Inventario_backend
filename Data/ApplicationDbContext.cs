@@ -12,7 +12,9 @@ namespace Inventario.Data
         }
 
         public DbSet<Company> Company { get; set; }
-        public DbSet<Store> Store{ get; set; }
-        public DbSet<Storage> Storage{ get; set; }
+        public DbSet<Store> Store { get; set; }
+        public DbSet<Storage> Storage { get; set; }
+
+        public DbSet<Categorization> Categorization { get; set; }
     }
 }

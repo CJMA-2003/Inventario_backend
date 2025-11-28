@@ -61,5 +61,38 @@ namespace Inventario.Services
             };
         }
 
+        public async Task<Storage> Update(int id,StorageUpdateDto dto)
+        {
+            var storage = _context.Storage.Find(id);
+            if(!string.IsNullOrEmpty(dto.name))
+            {
+                storage.Name = dto.name;
+            }
+
+            if(!string.IsNullOrEmpty(dto.address))
+            {
+                storage.Address = dto.address;
+            }
+
+            if(dto.store_id.HasValue){
+                storage.StoreId = dto.store_id.Value;
+            }
+            await _context.SaveChangesAsync();
+            return storage;
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            // Busca el registro
+            var registro = await _context.Storage.FindAsync(id);
+
+            if (registro == null)
+                return false; // No existe
+            // Elimina
+            _context.Storage.Remove(registro);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
