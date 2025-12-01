@@ -17,13 +17,13 @@ namespace Inventario.Services
         }
 
 
-        public async Task<Storage> Insert(StorageCreateDto dto)
+        public async Task<Storage> Insert(StorageDto dto)
         {
             var obj_insert = new Storage
             {
                 Name = dto.name,
                 Address = dto.address,
-                StoreId = dto.store_id,
+                StoreId = dto.store_id ?? 0,
             };
 
             _context.Storage.Add(obj_insert);
@@ -32,7 +32,7 @@ namespace Inventario.Services
         }
 
 
-        public async Task<object> List(StorageFilterDto dto)
+        public async Task<object> List(StorageDto dto)
         {
             var query = _context.Storage.AsQueryable();
             if (dto.paginate)
@@ -61,20 +61,21 @@ namespace Inventario.Services
             };
         }
 
-        public async Task<Storage> Update(int id,StorageUpdateDto dto)
+        public async Task<Storage> Update(int id, StorageDto dto)
         {
             var storage = _context.Storage.Find(id);
-            if(!string.IsNullOrEmpty(dto.name))
+            if (!string.IsNullOrEmpty(dto.name))
             {
                 storage.Name = dto.name;
             }
 
-            if(!string.IsNullOrEmpty(dto.address))
+            if (!string.IsNullOrEmpty(dto.address))
             {
                 storage.Address = dto.address;
             }
 
-            if(dto.store_id.HasValue){
+            if (dto.store_id.HasValue)
+            {
                 storage.StoreId = dto.store_id.Value;
             }
             await _context.SaveChangesAsync();

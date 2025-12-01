@@ -5,59 +5,64 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventario.Services
 {
-
-    public class CategorizationService
+    public class SupplierService
     {
         private readonly ApplicationDbContext _context;
-
-        public CategorizationService(ApplicationDbContext context)
+        public SupplierService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Categorization> Insert(CategorizationDto dto)
+
+        public async Task<Supplier> Insert(SupplierDto dto)
         {
-            var obj_insert = new Categorization
+            var obj_insert = new Supplier
             {
-                Value = dto.value,
-                ParentId = dto.parent_id ?? null,
+                IdentificationNumber = dto.identification_number,
+                Name = dto.name,
                 CompanyId = dto.company_id ?? 0
             };
-            _context.Categorization.Add(obj_insert);
+
+            _context.Supplier.Add(obj_insert);
             await _context.SaveChangesAsync();
+
             return obj_insert;
         }
 
-        public async Task<Categorization> Update(int id, CategorizationDto dto)
+
+        public async Task<Supplier> Update(int id, SupplierDto dto)
         {
-            var item = _context.Categorization.Find(id);
-            if (!string.IsNullOrEmpty(dto.value))
+            var item = _context.Supplier.Find(id);
+            if (!string.IsNullOrEmpty(dto.name))
             {
-                item.Value = dto.value;
+                item.Name = dto.name;
             }
 
-            if (dto.parent_id.HasValue)
+            if (!string.IsNullOrEmpty(dto.identification_number))
             {
-                item.ParentId = dto.parent_id.Value;
+                item.IdentificationNumber = dto.identification_number;
             }
+            if (dto.company_id.HasValue)
+            {
+                item.CompanyId = dto.company_id.Value;
+            }
+
             await _context.SaveChangesAsync();
             return item;
         }
 
-        public async Task<Boolean> Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var data = await _context.Categorization.FindAsync(id);
-            _context.Categorization.Remove(data);
+
+            var item = _context.Supplier.Find(id);
+            _context.Supplier.Remove(item);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<object> List(CategorizationDto dto)
+        public async Task<Object> List(SupplierDto dto)
         {
-            var query = _context.Categorization
-            .Include(x => x.Children)
-            .Where(x => x.ParentId == 0)
-            .AsQueryable();
+            var query = _context.Supplier.AsQueryable();
 
             if (dto.paginate)
             {
@@ -77,13 +82,14 @@ namespace Inventario.Services
                     to = Math.Min(dto.page * dto.perPage, total)
                 };
             }
-
-            var stores = await query.ToListAsync();
-            return new
+            else
             {
-                data = stores
-            };
+                var list = await query.ToListAsync();
+                return new
+                {
+                    data = list
+                };
+            }
         }
-
     }
 }

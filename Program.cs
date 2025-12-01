@@ -1,6 +1,7 @@
 using Inventario.Data;
 using Microsoft.EntityFrameworkCore;
 using Inventario.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +12,17 @@ options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddControllersWithViews();
 builder.Services.Scan(scan => scan
-    .FromAssemblyOf<StoreService>()      // una clase de referencia
-    .AddClasses(classes => classes.InNamespaceOf<StoreService>())
+    .FromAssemblyOf<StoreService>()
+    .AddClasses(classes => classes.InNamespaces("Inventario.Services"))
     .AsSelf()
     .WithScopedLifetime()
 );
+
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
 
 
 builder.Services.AddOpenApi();

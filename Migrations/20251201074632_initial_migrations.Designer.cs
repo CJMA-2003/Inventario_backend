@@ -4,6 +4,7 @@ using Inventario.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventario.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201074632_initial_migrations")]
+    partial class initial_migrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +38,7 @@ namespace inventario.Migrations
                         .HasColumnType("int")
                         .HasColumnName("company_id");
 
-                    b.Property<int?>("ParentId")
+                    b.Property<int>("ParentId")
                         .HasColumnType("int")
                         .HasColumnName("parent_id");
 
@@ -297,7 +300,9 @@ namespace inventario.Migrations
 
                     b.HasOne("Inventario.Models.Categorization", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
 

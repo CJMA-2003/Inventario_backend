@@ -17,13 +17,13 @@ namespace Inventario.Services
         }
 
 
-        public async Task<Store> Insert(StoreCreateDto data)
+        public async Task<Store> Insert(StoreDto dto)
         {
             var obj_insert = new Store
             {
-                Code = data.code,
-                Description = data.description,
-                CompanyId = data.company_id,
+                Code = dto.code,
+                Description = dto.description,
+                CompanyId = dto.company_id ?? 0,
             };
             _context.Store.Add(obj_insert);
             await _context.SaveChangesAsync();
@@ -32,25 +32,25 @@ namespace Inventario.Services
         }
 
 
-        public async Task<object> List(StoreFilterDto filtros)
+        public async Task<object> List(StoreDto dto)
         {
             var query = _context.Store.Include(s => s.Company).AsQueryable();
-            if (filtros.paginate)
+            if (dto.paginate)
             {
                 var total = await query.CountAsync();
 
                 var companies = await query
-                    .Skip((filtros.page - 1) * filtros.perPage)
-                    .Take(filtros.perPage)
+                    .Skip((dto.page - 1) * dto.perPage)
+                    .Take(dto.perPage)
                     .ToListAsync();
 
                 return new
                 {
                     data = companies,
-                    current_page = filtros.page,
-                    per_page = filtros.perPage,
+                    current_page = dto.page,
+                    per_page = dto.perPage,
                     total = total,
-                    to = Math.Min(filtros.page * filtros.perPage, total)
+                    to = Math.Min(dto.page * dto.perPage, total)
                 };
             }
 
@@ -65,41 +65,41 @@ namespace Inventario.Services
         public async Task<bool> Delete(int id)
         {
             // Busca el registro
-            var store = await _context.Store.FindAsync(id);
+            var item = await _context.Store.FindAsync(id);
 
-            if (store == null)
+            if (item == null)
                 return false; // No existe
 
             // Elimina
-            _context.Store.Remove(store);
+            _context.Store.Remove(item);
             await _context.SaveChangesAsync();
 
             return true;
         }
 
 
-        public async Task<Store> Update(int id, StoreUpdateDto dto)
+        public async Task<Store> Update(int id, StoreDto dto)
         {
-            var store = _context.Store.Find(id);
+            var item = _context.Store.Find(id);
 
             if (!string.IsNullOrEmpty(dto.code))
             {
-                store.Code = dto.code;
+                item.Code = dto.code;
             }
 
             if (!string.IsNullOrEmpty(dto.description))
             {
-                store.Description = dto.description;
+                item.Description = dto.description;
             }
 
             if (dto.company_id.HasValue)
             {
-                store.CompanyId = dto.company_id.Value;
+                item.CompanyId = dto.company_id.Value;
             }
 
             await _context.SaveChangesAsync();
 
-            return store;
+            return item;
         }
     }
 }

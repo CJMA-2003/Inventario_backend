@@ -2,25 +2,22 @@ using Inventario.Dtos;
 using Inventario.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inventario.Controllers
+namespace Iventario.Controllers
 {
-    [ApiController]
-    [Route("categorization")]
-    public class CategorizationController : ControllerBase
+    [Route("supplier")]
+    public class SupplierController : ControllerBase
     {
-        private readonly CategorizationService _services;
-
-        public CategorizationController(CategorizationService service)
+        private readonly SupplierService _service;
+        public SupplierController(SupplierService service)
         {
-            _services = service;
+            _service = service;
         }
-
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] CategorizationDto dto)
+        public async Task<IActionResult> Insert([FromBody] SupplierDto dto)
         {
             try
             {
-                var response = await _services.Insert(dto);
+                var response = await _service.Insert(dto);
                 return Ok(new
                 {
                     operation = "success",
@@ -33,19 +30,17 @@ namespace Inventario.Controllers
                 Console.WriteLine(e);
                 return StatusCode(500, new
                 {
-                    operation = "error",
+                    status = "error",
                     message = "Internal error"
                 });
             }
         }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CategorizationDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] SupplierDto dto)
         {
             try
             {
-                var response = await _services.Update(id, dto);
-
+                var response = await _service.Update(id, dto);
                 return Ok(new
                 {
                     operation = "success",
@@ -63,14 +58,12 @@ namespace Inventario.Controllers
                 });
             }
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var response = await _services.Delete(id);
-
+                var response = await _service.Delete(id);
                 return Ok(new
                 {
                     operation = "success",
@@ -87,13 +80,22 @@ namespace Inventario.Controllers
                 });
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] CategorizationDto dto)
+        public async Task<IActionResult> List([FromQuery] SupplierDto dto)
         {
-            var response = await _services.List(dto);
-            return Ok(response);
+            try
+            {
+                var response = await _service.List(dto);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "Internal error"
+                });
+            }
         }
-
     }
 }

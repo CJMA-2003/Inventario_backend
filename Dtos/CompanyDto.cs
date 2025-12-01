@@ -1,12 +1,13 @@
 namespace Inventario.Dtos
 {
-    public class CategorizationDto
+    public class CompanyDto
     {
-        public string? value { get; set; }
-        public int? parent_id { get; set; }
-        public int? company_id { get; set; }
+        public string? identidad { get; set; }
+        public string? nombre { get; set; }
+        public string? direccion { get; set; }
         public bool paginate { get; set; } = false;
         public int perPage { get; set; } = 10;
         public int page { get; set; } = 1;
     }
+
 }

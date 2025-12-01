@@ -16,13 +16,15 @@ namespace Iventario.Controllers.Storage
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStore([FromBody] StoreCreateDto dto)
+        public async Task<IActionResult> CreateStore([FromBody] StoreDto dto)
         {
             try
             {
                 var response = await _service.Insert(dto);
                 return Ok(response);
-            }catch(Exception ex){
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, new
                 {
                     status = "error",
@@ -32,7 +34,7 @@ namespace Iventario.Controllers.Storage
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetStore([FromQuery] StoreFilterDto filterDto)
+        public async Task<IActionResult> GetStore([FromQuery] StoreDto filterDto)
         {
             var response = await _service.List(filterDto);
             return Ok(response);
@@ -57,10 +59,11 @@ namespace Iventario.Controllers.Storage
                 }
                 else
                 {
-                    return NotFound(new { status = "error", message = "No se encontró el registro" });
+                    return NotFound(new { status = "error", message = "No se encontrï¿½ el registro" });
                 }
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 return StatusCode(500, new
                 {
                     status = "error",
@@ -70,20 +73,21 @@ namespace Iventario.Controllers.Storage
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> updateStore(int id,[FromBody]StoreUpdateDto dto)
+        public async Task<IActionResult> updateStore(int id, [FromBody] StoreDto dto)
         {
             try
             {
-                var response = await _service.Update(id,dto);
+                var response = await _service.Update(id, dto);
                 return Ok(new
                 {
                     status = "success",
                     message = "Registro actualizado con exito",
                     data = response
                 });
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                return StatusCode(500,new
+                return StatusCode(500, new
                 {
                     status = "error",
                     message = "Internal Error"

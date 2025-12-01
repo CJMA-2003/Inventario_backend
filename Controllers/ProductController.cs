@@ -1,32 +1,30 @@
+using Microsoft.AspNetCore.Mvc;
 using Inventario.Dtos;
 using Inventario.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Inventario.Controllers
 {
-    [ApiController]
-    [Route("categorization")]
-    public class CategorizationController : ControllerBase
+    [Route("product")]
+    public class ProductController : ControllerBase
     {
-        private readonly CategorizationService _services;
-
-        public CategorizationController(CategorizationService service)
+        private readonly ProductService _service;
+        public ProductController(ProductService service)
         {
-            _services = service;
+            _service = service;
         }
-
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] CategorizationDto dto)
+        public async Task<IActionResult> Insert([FromBody] ProductDto dto)
         {
             try
             {
-                var response = await _services.Insert(dto);
+                var response = await _service.Insert(dto);
                 return Ok(new
                 {
                     operation = "success",
                     message = "Registro guardado con éxito.",
                     obj = response,
                 });
+
             }
             catch (Exception e)
             {
@@ -38,14 +36,12 @@ namespace Inventario.Controllers
                 });
             }
         }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CategorizationDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] ProductDto dto)
         {
             try
             {
-                var response = await _services.Update(id, dto);
-
+                var response = await _service.Update(id, dto);
                 return Ok(new
                 {
                     operation = "success",
@@ -56,6 +52,7 @@ namespace Inventario.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Console.WriteLine(e);
                 return StatusCode(500, new
                 {
                     operation = "error",
@@ -63,14 +60,12 @@ namespace Inventario.Controllers
                 });
             }
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var response = await _services.Delete(id);
-
+                var response = await _service.Delete(id);
                 return Ok(new
                 {
                     operation = "success",
@@ -80,6 +75,7 @@ namespace Inventario.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Console.WriteLine(e);
                 return StatusCode(500, new
                 {
                     operation = "error",
@@ -87,13 +83,24 @@ namespace Inventario.Controllers
                 });
             }
         }
-
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] CategorizationDto dto)
+        public async Task<IActionResult> List([FromQuery] ProductDto dto)
         {
-            var response = await _services.List(dto);
-            return Ok(response);
+            try
+            {
+                var response = await _service.List(dto);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e);
+                return StatusCode(500, new
+                {
+                    operation = "error",
+                    message = "Internal error"
+                });
+            }
         }
-
     }
 }

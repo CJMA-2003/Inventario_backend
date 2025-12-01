@@ -1,6 +1,5 @@
-using Inventario.Data;
-using Inventario.Dtos.Company;
-using Inventario.Models;
+using Inventario.Dtos;
+using Inventario.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventario.Controllers
@@ -9,97 +8,91 @@ namespace Inventario.Controllers
     [ApiController]
     public class CompanyController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public CompanyController(ApplicationDbContext context)
+        private readonly CompanyService _service;
+        public CompanyController(CompanyService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: company?page=1&perPage=10
         [HttpGet]
-        public IActionResult GetCompanies(int page = 1, int perPage = 10)
+        public async Task<IActionResult> List([FromQuery] CompanyDto dto)
         {
-            var total = _context.Company.Count();
-
-            var companies = _context.Company
-                .Skip((page - 1) * perPage)
-                .Take(perPage)
-                .ToList();
-
-            var response = new
-            {
-                data = companies,
-                current_page = page,
-                per_page = perPage,
-                total = total,
-                to = Math.Min(page * perPage, total)
-            };
-
-            return Ok(response);
+            var x = await _service.List(dto);
+            return Ok(x);
         }
 
-        // POST: company
         [HttpPost]
-        public IActionResult CreateCompany([FromBody] CompanyCreateDto dto)
+        public async Task<IActionResult> Insert([FromBody] CompanyDto dto)
         {
-            var existingCompany = _context.Company
-                .FirstOrDefault(c => c.Identidad == dto.identidad);
-
-            if (existingCompany != null)
+            try
             {
-                return BadRequest(new
+                var response = await _service.Insert(dto);
+                return Ok(new
                 {
-                    status = "error",
-                    message = "La compañía ya existe"
+                    operation = "success",
+                    message = "Registro guardado con Ã©xito.",
+                    obj = response,
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, new
+                {
+                    operation = "error",
+                    message = "Internal error"
                 });
             }
-
-            var company = new Company
-            {
-                Identidad = dto.identidad,
-                Nombre = dto.nombre,
-                Direccion = dto.direccion
-            };
-
-            _context.Company.Add(company);
-            _context.SaveChanges();
-
-            return Ok(new
-            {
-                status = "success",
-                message = "Compañía registrada exitosamente",
-                obj = company
-            });
         }
 
-        // PUT: company/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id, [FromBody] CompanyUpdateDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] CompanyDto dto)
         {
-            var company = _context.Company.Find(id);
-
-            if (company == null)
+            try
             {
-                return BadRequest(new
+                var response = await _service.Update(id, dto);
+                return Ok(new
                 {
-                    status = "error",
-                    message = "La compañía no existe"
+                    operation = "success",
+                    message = "Los cambios se han guardado correctamente.",
+                    obj = response,
                 });
             }
-
-            if (!string.IsNullOrEmpty(dto.direccion))
+            catch (Exception e)
             {
-                company.Direccion = dto.direccion;
+                Console.WriteLine(e);
+                Console.WriteLine(e);
+                return StatusCode(500, new
+                {
+                    operation = "error",
+                    message = "Internal error"
+                });
             }
+        }
 
-            _context.SaveChanges();
-
-            return Ok(new
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
             {
-                status = "success",
-                message = "Valores actualizados correctamente"
-            });
+                var response = await _service.Delete(id);
+                return Ok(new
+                {
+                    operation = "success",
+                    message = "El registro se ha eliminado correctamente.",
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e);
+                return StatusCode(500, new
+                {
+                    operation = "error",
+                    message = "Internal error"
+                });
+            }
         }
     }
 }
